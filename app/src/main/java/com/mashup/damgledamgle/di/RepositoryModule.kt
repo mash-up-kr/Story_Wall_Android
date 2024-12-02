@@ -39,4 +39,7 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindDamgleRepository(impl: DamgleRepositoryImpl): DamgleRepository
 
+    @Singleton
+    @Binds
+    abstract fun bindEnglishAddressRepository(impl: EnglishAddressRepositoryImpl): EnglishAddressRepository
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mashup.damgledamgle.domain.entity.Damgle
 import com.mashup.damgledamgle.domain.entity.base.launchWithResult
+import com.mashup.damgledamgle.domain.usecase.damgle.ConvertAddressToEnglishUseCase
 import com.mashup.damgledamgle.domain.usecase.damgle.LeaveDamgleStoryUseCase
 import com.mashup.damgledamgle.domain.usecase.home.GetNaverGeocodeUseCase
 import com.mashup.damgledamgle.presentation.common.ViewState
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LeaveStoryViewModel @Inject constructor(
+    private val convertAddressToEnglishUseCase: ConvertAddressToEnglishUseCase,
     private val leaveDamgleStoryRequestUseCase: LeaveDamgleStoryUseCase,
     private val getNaverGeocodeUseCase: GetNaverGeocodeUseCase,
 ) : ViewModel() {
@@ -31,8 +33,10 @@ class LeaveStoryViewModel @Inject constructor(
                     val address1 = it.region.area3.name
                     val address2 = it.land.name
 
+                    val englishAddress = convertAddressToEnglishUseCase(address1, address2)
+
                     launchWithResult(
-                        result = leaveDamgleStoryRequestUseCase(longitude, latitude, content, address1, address2),
+                        result = leaveDamgleStoryRequestUseCase(longitude, latitude, content, englishAddress.sggName, englishAddress.roadName),
                         suspendOnSuccess = { damgle -> _leaveDamgleStoryState.emit(ViewState.Success(damgle)) },
                         suspendOnError = { error -> _leaveDamgleStoryState.emit(ViewState.Error(error.toString())) }
                     )
